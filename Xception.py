@@ -7,6 +7,7 @@ Created on Sat Aug 26 16:36:49 2023
 
 import torch.nn as nn
 from torch.nn import functional as F
+import math
 
 class SeparableConv2d(nn.Module):
     def __init__(self,in_channels,out_channels,kernel_size=1,stride=1,padding=0,dilation=1,bias=False):
@@ -30,7 +31,7 @@ class Xception(nn.Module):
     self.batchNorm2 = nn.BatchNorm2d(64)
 
     self.bconv1 = self._make_bconv(64, 128)
-    self.block1 = self._make_block(64, 128, False)
+    self.block1 = self._make_block(64, 128, relu_active = False)
 
     self.bconv2 = self._make_bconv(128, 256)
     self.block2 = self._make_block(128, 256)
@@ -104,21 +105,14 @@ class Xception(nn.Module):
     x = self.batchNorm2(x)
     
 # ==============  Entry Flow   ================
-    prev_x = x
-    x = self.block1(x)
-    prev_x = self.bconv1(prev_x)
-    x += prev_x
 
-    prev_x = x
-    x = self.block2(x)
-    prev_x = self.bconv2(prev_x)
-    x += prev_x
-
-    prev_x = x
-    x = self.block3(x)
-    prev_x = self.bconv3(prev_x)
-    x += prev_x
-
+    for block, bconv in zip([self.block1, self.block2, self.block3],
+                             [self.bconv1, self.bconv2, self.bconv3]):
+        prev_x = x
+        x = block(x)
+        prev_x = bconv(prev_x)
+        x += prev_x
+        
 # ============== Middle Flow ===================
     prev_x = x
     for _ in range(8):
