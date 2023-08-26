@@ -105,7 +105,6 @@ class Xception(nn.Module):
     x = self.batchNorm2(x)
     
 # ==============  Entry Flow   ================
-
     for block, bconv in zip([self.block1, self.block2, self.block3],
                              [self.bconv1, self.bconv2, self.bconv3]):
         prev_x = x
@@ -120,7 +119,6 @@ class Xception(nn.Module):
     x += prev_x
 
 # ============== Exit Flow ===================
-    
     prev_x = x
     x = self.block4(x)
     prev_x = self.bconv4(prev_x)
@@ -135,7 +133,6 @@ class Xception(nn.Module):
     x = self.exitSep2BN(x)
 
 # ========== Fully Connected Layer ========
-
     x = F.adaptive_avg_pool2d(x, (1, 1))
     x = x.view(x.size(0), -1)
     x = self.fc(x)
