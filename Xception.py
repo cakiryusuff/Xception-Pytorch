@@ -7,7 +7,6 @@ Created on Sat Aug 26 16:36:49 2023
 
 import torch.nn as nn
 from torch.nn import functional as F
-import math
 
 class SeparableConv2d(nn.Module):
     def __init__(self,in_channels,out_channels,kernel_size=1,stride=1,padding=0,dilation=1,bias=False):
