@@ -96,12 +96,14 @@ class Xception(nn.Module):
 
   def forward(self, x):
     x = self.conv1(x)
-    x = self.activationRelu(x)
     x = self.batchNorm(x)
+    x = self.activationRelu(x)
+
 
     x = self.conv2(x)
-    x = self.activationRelu(x)
     x = self.batchNorm2(x)
+    x = self.activationRelu(x)
+
     
 # ==============  Entry Flow   ================
     for block, bconv in zip([self.block1, self.block2, self.block3],
@@ -124,12 +126,13 @@ class Xception(nn.Module):
     x += prev_x
     
     x = self.exitSep1(x)
-    x = self.activationRelu(x)
     x = self.exitSep1BN(x)
+    x = self.activationRelu(x)
+
 
     x = self.exitSep2(x)
-    x = self.activationRelu(x)
     x = self.exitSep2BN(x)
+    x = self.activationRelu(x)
 
 # ========== Fully Connected Layer ========
     x = F.adaptive_avg_pool2d(x, (1, 1))
